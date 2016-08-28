@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from os.path import isfile, basename
+from os.path import isfile, basename, getsize
 from os import listdir, stat
 from stat import *
 import sys
@@ -19,7 +19,7 @@ def get_tree(dir, tabs):
 	output += '|--> '
 	if isfile(dir):
 		info = stat(dir)
-		return output + oct(info.st_mode)[-3:] + ' ' + BLUE + BOLD + basename(dir) + END + ' updated_at: ' + time.strftime('%Y-%m-%d %H:%M:%S' ,time.localtime(info.st_mtime)) + ' created_at: ' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(info.st_ctime)) +  '\n'
+		return output + oct(info.st_mode)[-3:] + " " + BLUE + BOLD + basename(dir) + END + '\t|updated_at: ' + time.strftime('%Y-%m-%d %H:%M:%S' ,time.localtime(info.st_mtime)) + '\t|created_at: ' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(info.st_ctime)) + '\t' + str(getsize(dir) >> 10) + 'KB\n'
 	else:
 		output += GREEN + BOLD + basename(dir) + END + END + '\n'
 		for elem in listdir(dir):
@@ -27,6 +27,7 @@ def get_tree(dir, tabs):
 				output += get_tree(dir + '/' + elem, tabs + 1)
 		return output
 
+flag = len(sys.argv) > 2
 try:
 	dirname = sys.argv[1]
 	print(get_tree(dirname, 0))
